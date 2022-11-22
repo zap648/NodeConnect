@@ -33,6 +33,8 @@ ANodeSphere::ANodeSphere()
     else if (r == 7)
         size = 26;
 
+    cost = size;
+
 	NodeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("NodeMesh"));
 	NodeMesh->SetupAttachment(GetRootComponent());
     NodeMesh->SetWorldScale3D(FVector(size/5, size/5, size/5));

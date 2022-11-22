@@ -2,6 +2,7 @@
 
 #include "NodeSphere.h"
 #include "DrawDebugHelpers.h"
+#include "Math/Vector.h"
 #include "NodeManager.h"
 
 // Sets default values
@@ -126,4 +127,50 @@ void ANodeManager::showConnect()
 		}
 	}
 	UE_LOG(LogTemp, Display, TEXT("Connections shown!"))
+}
+
+void ANodeManager::RunAlgorithm()
+{
+	int NodeNumber;
+
+	if (!bConnected)
+		return;
+
+	bAlgoReachedEnd = false;
+
+	// We 
+	for (int i = 0; i < SphereArray.Num(); i++)
+	{
+		if (!SphereArray[i]->bStart)
+		{
+			SphereArray[i]->cost = INT_MAX;
+		}
+		else
+		{
+			NodeNumber = i;
+			SphereArray[i]->cost = 0;
+		}
+	}
+
+	SearchNodes.Add(SphereArray[0]);
+
+	CurrentNodeLocation = SphereArray[NodeNumber].GetActorLocation();
+
+	float tempPath;
+	float shortestNode;
+	shortestPath = 0;
+
+	for (int i = 0; i < SphereArray[NodeNumber]->ConnectedNodesList.Num(); i++)
+	{
+		NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[i]->GetActorLocation();
+
+		tempPath = FVector::Dist(CurrentNodeLocation, NextNodeLocation);
+
+		if (shortestPath > tempPath)
+		{
+			shortestPath = tempPath;
+			shortestNode = i;
+		}
+	}
+
 }
