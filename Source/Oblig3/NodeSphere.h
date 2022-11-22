@@ -23,15 +23,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	bool bStart;
-	bool bEnd;
+	
 	bool bConnecting;
-
 
 	TArray<ANodeSphere*> ConnectedNodesList;
 
 	void connectTo(ANodeSphere* connectSphere);
+	void setStartNode(bool b);
+	void setEndNode(bool b);
 
 	UPROPERTY(VisibleAnywhere)
 		UStaticMeshComponent* NodeMesh = nullptr;
@@ -40,7 +39,13 @@ public:
 		USphereComponent* CollisionSphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
-		class UStaticMesh* WhiteMaterial;
+		class UStaticMesh* WhiteSphere;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		class UStaticMesh* RedSphere;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		class UStaticMesh* GreenSphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
 		float size;
@@ -51,9 +56,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
 		float collisionRadius;
 
-
-
 	UFUNCTION()
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
 			int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+private:
+	bool bStart;
+	bool bEnd;
 };

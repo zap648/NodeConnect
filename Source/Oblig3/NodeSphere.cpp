@@ -44,8 +44,16 @@ ANodeSphere::ANodeSphere()
 	CollisionSphere->SetSphereRadius(50);
 	CollisionSphere->SetupAttachment(NodeMesh);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/Sphere.Sphere'"));
-	WhiteMaterial = MeshAsset.Object;
+	ConstructorHelpers::FObjectFinder<UStaticMesh>WhiteMeshAsset(TEXT("StaticMesh'/Game/WhiteSphere.WhiteSphere'"));
+	WhiteSphere = WhiteMeshAsset.Object;
+	
+    ConstructorHelpers::FObjectFinder<UStaticMesh>RedMeshAsset(TEXT("StaticMesh'/Game/RedSphere.RedSphere'"));
+	RedSphere = RedMeshAsset.Object;
+	
+    ConstructorHelpers::FObjectFinder<UStaticMesh>GreenMeshAsset(TEXT("StaticMesh'/Game/GreenSphere.GreenSphere'"));
+	GreenSphere = GreenMeshAsset.Object;
+
+    NodeMesh->SetStaticMesh(WhiteSphere);
 
 	bStart = false;
 	bEnd = false;
@@ -57,8 +65,6 @@ ANodeSphere::ANodeSphere()
 void ANodeSphere::BeginPlay()
 {
 	Super::BeginPlay();
-
-	NodeMesh->SetStaticMesh(WhiteMaterial);
     
     CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ANodeSphere::OnOverlap);
 }
@@ -67,36 +73,6 @@ void ANodeSphere::BeginPlay()
 void ANodeSphere::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    /*
-    // Set what actors to seek out from it's collision channel
-    TArray<TEnumAsByte<EObjectTypeQuery>> traceObjectTypes;
-    traceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-
-    // Ignore any specific actors
-    TArray<AActor*> ignoreActors;
-    // Ignore self or remove this line to not ignore any
-    ignoreActors.Init(this, 1);
-
-    // Array of actors that are inside the radius of the sphere
-    TArray<AActor*> outActors;
-
-    // Total radius of the sphere
-    float radius = CollisionSphere->GetUnscaledSphereRadius();
-    // Sphere's spawn loccation within the world
-    FVector sphereSpawnLocation = GetActorLocation();
-    // Class that the sphere should hit against and include in the outActors array (Can be null)
-    UClass* seekClass = ANodeSphere::StaticClass(); // NULL;
-    UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereSpawnLocation, radius, traceObjectTypes, seekClass, ignoreActors, outActors);
-
-    // Optional: Use to have a visual representation of the SphereOverlapActors
-    DrawDebugSphere(GetWorld(), GetActorLocation(), radius, 12, FColor::Red, true, 10.0f);
-
-    // Finally iterate over the outActor array
-    for (AActor* overlappedActor : outActors) {
-        UE_LOG(LogTemp, Log, TEXT("OverlappedActor: %s"), *overlappedActor->GetName());
-    }
-    */
 
 }
 
@@ -121,14 +97,24 @@ void ANodeSphere::connectTo(ANodeSphere* connectSphere)
     UE_LOG(LogTemp, Display, TEXT("A node has connected with another node!"));
 }
 
+void ANodeSphere::setStartNode(bool b)
+{
+    bStart = b;
+    NodeMesh->SetStaticMesh(GreenSphere);
+}
+
+void ANodeSphere::setEndNode(bool b)
+{
+    bEnd = b;
+    NodeMesh->SetStaticMesh(RedSphere);
+}
+
 void ANodeSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComponent, int32 OtherbodyIndex, bool bFromSweep, const FHitResult& SweepResult) 
 {
-    
-    UE_LOG(LogTemp, Display, TEXT("A node has collided with another node!"));
-    
     if (OtherActor->IsA(ANodeSphere::StaticClass())) {
         ANodeSphere* CollidedNode = Cast<ANodeSphere>(OtherActor);
+        UE_LOG(LogTemp, Display, TEXT("A node has collided with another node!"));
 
         // First check if the node you just collided with is already in your ConnectedNodeList
         // If so we don't need to add it, otherwise we do
@@ -163,3 +149,4 @@ void ANodeSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
     }
     
 }
+
