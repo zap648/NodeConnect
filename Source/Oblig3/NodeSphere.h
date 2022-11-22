@@ -46,6 +46,9 @@ public:
 		float size;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		float cost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
 		float collisionRadius;
 
 

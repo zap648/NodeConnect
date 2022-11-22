@@ -27,13 +27,23 @@ public:
 	void connectNodes();
 	bool checkConnect();
 	void showConnect();
+
+	void RunAlgorithm();
 	
 	bool bConnecting;
 	int loopCount;
+	bool bAlgoReachedEnd;
+	float shortestPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<class ANodeSphere*> SphereArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<int> WhichPlayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
+		TArray<class ANodeSphere*> SearchedNodes;
+
+	FVector CurrentNodeLocation;
+	FVector NextNodeLocation;
 };
