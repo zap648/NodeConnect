@@ -50,8 +50,8 @@ void ANodeManager::spawnNodes()
 	UE_LOG(LogTemp, Display, TEXT("Nodes spawned!"))
 
 	// Setting the start & end nodes
-	SphereArray[0]->bStart = true;
-	SphereArray[8]->bEnd = true;
+	SphereArray[0]->setStartNode(true);
+	SphereArray[8]->setEndNode(false);
 	UE_LOG(LogTemp, Display, TEXT("Start & End node set!"))
 }
 
@@ -135,7 +135,7 @@ void ANodeManager::showConnect()
 				FVector Start = SphereArray[i]->GetActorLocation();
 				FVector End = SphereArray[i]->ConnectedNodesList[j]->GetActorLocation();
 
-				DrawDebugLine(GetWorld(), Start, End, FColor::Black, true, -1, 0, 3.f);
+				DrawDebugLine(GetWorld(), Start, End, FColor::Black, true, -1, 0, 10.f);
 			}
 		}
 	}
