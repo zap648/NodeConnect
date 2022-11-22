@@ -85,20 +85,6 @@ void ANodeManager::connectNodes()
 		//UE_LOG(LogTemp, Display, TEXT("Sphere Radius increased!"));
 	}
 
-	//else
-	//{
-	//	for (int i = 0; i < SphereArray.Num(); i++)
-	//	{
-	//		for (int j = 0; j < SphereArray.Num(); j++) {
-
-	//			if (i != j)
-	//			{
-	//				SphereArray[i]->connectTo(SphereArray[j]);
-	//			}
-	//		}
-	//	}
-	//}
-
 	loopCount++;
 	//UE_LOG(LogTemp, Display, TEXT("Loop completed!"));
 }
