@@ -28,6 +28,9 @@ public:
 	bool checkConnect();
 	void showConnect();
 	
+	bool bConnecting;
+	int loopCount;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<class ANodeSphere*> SphereArray;
 

@@ -12,7 +12,9 @@ ANodeManager::ANodeManager()
 
 	SphereArray.Init(NULL, 9);
 	WhichPlayer.Init(0, 9);
-	
+
+	bConnecting = true;
+	loopCount = 0;	
 }
 
 // Called when the game starts or when spawned
@@ -21,8 +23,7 @@ void ANodeManager::BeginPlay()
 	Super::BeginPlay();
 
 	spawnNodes();
-	connectNodes();
-	showConnect();
+	UE_LOG(LogTemp, Display, TEXT("Connect started!"));
 }
 
 // Called every frame
@@ -30,6 +31,8 @@ void ANodeManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bConnecting)
+		connectNodes();
 }
 
 void ANodeManager::spawnNodes()
@@ -54,76 +57,71 @@ void ANodeManager::spawnNodes()
 
 void ANodeManager::connectNodes()
 {
-	bool bConnecting = true;
-	int loopCount = 0;
-	
-	UE_LOG(LogTemp, Display, TEXT("Connect started!"));
-	do {
-		// Prevents an endless loop
-		if (loopCount > 10000)
+	// Prevents an endless loop
+	if (loopCount > 10000)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Endless loop detected, ending connecting..."));
+		bConnecting = false;
+	}
+
+	// Checks if all nodes are connected
+	if (checkConnect()) 
+	{
+		for (int i = 0; i < SphereArray.Num(); i++)
 		{
-			UE_LOG(LogTemp, Error, TEXT("Endless loop detected, ending connecting..."));
-			break;
+			SphereArray[i]->bConnecting = false;
+			bConnecting = false;
 		}
+		UE_LOG(LogTemp, Display, TEXT("Connecting completed! Showing nodes..."));
+		showConnect();
+	}
 
-		// Checks if all nodes are connected
-		if (checkConnect()) 
+	else
+	{
+		for (int i = 0; i < SphereArray.Num(); i++)
 		{
-			for (int i = 0; i < SphereArray.Num(); i++)
-			{
-				SphereArray[i]->bConnecting = false;
-				bConnecting = false;
-			}
-			UE_LOG(LogTemp, Display, TEXT("Connecting completed!"));
+			SphereArray[i]->CollisionSphere->SetSphereRadius(loopCount);
 		}
+		//UE_LOG(LogTemp, Display, TEXT("Sphere Radius increased!"));
+	}
 
-		//else
-		//{
-		//	for (int i = 0; i < SphereArray.Num(); i++)
-		//	{
-		//		SphereArray[i]->CollisionSphere->SetSphereRadius(loopCount);
-		//	}
-		//	//UE_LOG(LogTemp, Display, TEXT("Sphere Radius increased!"));
-		//}
+	//else
+	//{
+	//	for (int i = 0; i < SphereArray.Num(); i++)
+	//	{
+	//		for (int j = 0; j < SphereArray.Num(); j++) {
 
-		else
-		{
-			for (int i = 0; i < SphereArray.Num(); i++)
-			{
-				for (int j = 0; j < SphereArray.Num(); j++) {
+	//			if (i != j)
+	//			{
+	//				SphereArray[i]->connectTo(SphereArray[j]);
+	//			}
+	//		}
+	//	}
+	//}
 
-					if (i != j)
-					{
-						SphereArray[i]->connectTo(SphereArray[j]);
-					}
-				}
-			}
-		}
-
-		loopCount++;
-		//UE_LOG(LogTemp, Display, TEXT("Loop completed!"));
-	} while (bConnecting);
+	loopCount++;
+	//UE_LOG(LogTemp, Display, TEXT("Loop completed!"));
 }
 
 bool ANodeManager::checkConnect()
 {
-	bool bConnecting;
+	bool bConnected;
 	for (int i = 0; i < SphereArray.Num(); i++) 
 	{
 		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
-			bConnecting = false;
+			bConnected = false;
 			if (SphereArray[i]->ConnectedNodesList[j] != nullptr)
 			{
-				bConnecting = true;
+				bConnected = true;
 				continue;
 			}
 		}
-		if (bConnecting == false)
+		if (bConnected == false)
 			break;
 	}
 
-	return bConnecting;
+	return bConnected;
 }
 
 void ANodeManager::showConnect()
