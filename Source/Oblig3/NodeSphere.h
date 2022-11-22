@@ -31,6 +31,8 @@ public:
 	void connectTo(ANodeSphere* connectSphere);
 	void setStartNode(bool b);
 	void setEndNode(bool b);
+	bool isStartNode();
+	bool isEndNode();
 
 	UPROPERTY(VisibleAnywhere)
 		UStaticMeshComponent* NodeMesh = nullptr;

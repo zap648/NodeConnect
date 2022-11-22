@@ -39,6 +39,9 @@ public:
 		TArray<class ANodeSphere*> SphereArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
+		TArray<class ANodeSphere*> SearchNodes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<int> WhichPlayer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)

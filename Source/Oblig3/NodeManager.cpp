@@ -133,7 +133,7 @@ void ANodeManager::RunAlgorithm()
 {
 	int NodeNumber;
 
-	if (!bConnected)
+	if (checkConnect())
 		return;
 
 	bAlgoReachedEnd = false;
@@ -141,7 +141,7 @@ void ANodeManager::RunAlgorithm()
 	// We 
 	for (int i = 0; i < SphereArray.Num(); i++)
 	{
-		if (!SphereArray[i]->bStart)
+		if (!SphereArray[i]->isStartNode())
 		{
 			SphereArray[i]->cost = INT_MAX;
 		}
@@ -154,7 +154,7 @@ void ANodeManager::RunAlgorithm()
 
 	SearchNodes.Add(SphereArray[0]);
 
-	CurrentNodeLocation = SphereArray[NodeNumber].GetActorLocation();
+	CurrentNodeLocation = SphereArray[NodeNumber]->GetActorLocation();
 
 	float tempPath;
 	float shortestNode;
