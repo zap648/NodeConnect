@@ -34,6 +34,7 @@ void ANodeManager::Tick(float DeltaTime)
 
 	if (bConnecting)
 		connectNodes();
+
 }
 
 void ANodeManager::spawnNodes()
@@ -95,6 +96,8 @@ bool ANodeManager::checkConnect()
 	bool bConnected;
 	for (int i = 0; i < SphereArray.Num(); i++) 
 	{
+		UE_LOG(LogTemp, Display, TEXT("Checking connections"))
+
 		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
 			bConnected = false;
@@ -131,14 +134,14 @@ void ANodeManager::showConnect()
 
 void ANodeManager::RunAlgorithm()
 {
-	int NodeNumber;
+	int NodeNumber = 0;
 
 	if (checkConnect())
 		return;
 
 	bAlgoReachedEnd = false;
 
-	// We 
+	// We initialize all Sphere costs to infinite, except the Start Node
 	for (int i = 0; i < SphereArray.Num(); i++)
 	{
 		if (!SphereArray[i]->isStartNode())
@@ -149,27 +152,36 @@ void ANodeManager::RunAlgorithm()
 		{
 			NodeNumber = i;
 			SphereArray[i]->cost = 0;
+
+			// Adding the starting node to the Searched Nodes array
+			SearchedNodes.Add(SphereArray[i]);
 		}
 	}
 
-	SearchNodes.Add(SphereArray[0]);
+	
+	
 
-	CurrentNodeLocation = SphereArray[NodeNumber]->GetActorLocation();
-
-	float tempPath;
-	float shortestNode;
+	float tempPath = 0;
+	float shortestNode = 0;
 	shortestPath = 0;
 
-	for (int i = 0; i < SphereArray[NodeNumber]->ConnectedNodesList.Num(); i++)
+	for (int i = 0; i < SphereArray.Num(); i++)
 	{
-		NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[i]->GetActorLocation();
+		CurrentNodeLocation = SphereArray[0]->GetActorLocation();
 
-		tempPath = FVector::Dist(CurrentNodeLocation, NextNodeLocation);
-
-		if (shortestPath > tempPath)
+		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
-			shortestPath = tempPath;
-			shortestNode = i;
+			NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[j]->GetActorLocation();
+
+			tempPath = FVector::Dist(CurrentNodeLocation, NextNodeLocation);
+
+			UE_LOG(LogTemp, Display, TEXT("Temporary path: %tempPath"));
+
+			if (shortestPath > tempPath)
+			{
+				shortestPath = tempPath;
+				shortestNode = i;
+			}
 		}
 	}
 
