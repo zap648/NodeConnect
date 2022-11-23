@@ -29,6 +29,7 @@ public:
 	void showConnect();
 
 	void RunAlgorithm();
+	void dijkstra();
 	
 	bool bConnecting;
 	int loopCount;

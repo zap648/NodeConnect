@@ -58,7 +58,7 @@ ANodeSphere::ANodeSphere()
 	bStart = false;
 	bEnd = false;
 
-	ConnectedNodesList.Init(nullptr, 100);
+	ConnectedNodesList.Init(nullptr, 0);
 }
 
 // Called when the game starts or when spawned

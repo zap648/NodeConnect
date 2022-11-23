@@ -106,6 +106,8 @@ bool ANodeManager::checkConnect()
 	// UE_LOG(LogTemp, Display, TEXT("Checking connections"));
 	for (int i = 0; i < SphereArray.Num(); i++) 
 	{
+		//UE_LOG(LogTemp, Display, TEXT("Checking connections"));
+
 		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
 			bConnected = false;
