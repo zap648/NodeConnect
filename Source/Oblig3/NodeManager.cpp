@@ -3,6 +3,7 @@
 #include "NodeSphere.h"
 #include "DrawDebugHelpers.h"
 #include "Math/Vector.h"
+#include <math.h>
 #include "NodeManager.h"
 
 // Sets default values
@@ -15,6 +16,7 @@ ANodeManager::ANodeManager()
 	WhichPlayer.Init(0, 9);
 
 	bConnecting = true;
+	bAlgoReachedEnd = false;
 	loopCount = 0;	
 }
 
@@ -35,6 +37,13 @@ void ANodeManager::Tick(float DeltaTime)
 	if (bConnecting)
 		connectNodes();
 
+	if (!bConnecting && !bAlgoReachedEnd)
+		RunAlgorithm();
+
+	//for (int i = 0; i < SphereArray.Num(); i++)
+	//{
+	//	UE_LOG(LogTemp, Display, TEXT("This a testing statement. %s"), *SphereArray[i]->GetName());
+	//}
 }
 
 void ANodeManager::spawnNodes()
@@ -49,12 +58,12 @@ void ANodeManager::spawnNodes()
 	SphereArray[6] = GetWorld()->SpawnActor<ANodeSphere>(ANodeSphere::StaticClass(), FVector(-1000.f, -1000.f, 600.f), FRotator(0.f, 0.f, 0.f));
 	SphereArray[7] = GetWorld()->SpawnActor<ANodeSphere>(ANodeSphere::StaticClass(), FVector(-1000.f, 0.f, 0.f), FRotator(0.f, 0.f, 0.f));
 	SphereArray[8] = GetWorld()->SpawnActor<ANodeSphere>(ANodeSphere::StaticClass(), FVector(-1000.f, 1000.f, -800.f), FRotator(0.f, 0.f, 0.f));
-	UE_LOG(LogTemp, Display, TEXT("Nodes spawned!"))
+	UE_LOG(LogTemp, Display, TEXT("Nodes spawned!"));
 
 	// Setting the start & end nodes
 	SphereArray[0]->setStartNode(true);
 	SphereArray[8]->setEndNode(false);
-	UE_LOG(LogTemp, Display, TEXT("Start & End node set!"))
+	UE_LOG(LogTemp, Display, TEXT("Start & End node set!"));
 }
 
 void ANodeManager::connectNodes()
@@ -94,10 +103,9 @@ void ANodeManager::connectNodes()
 bool ANodeManager::checkConnect()
 {
 	bool bConnected;
+	// UE_LOG(LogTemp, Display, TEXT("Checking connections"));
 	for (int i = 0; i < SphereArray.Num(); i++) 
 	{
-		UE_LOG(LogTemp, Display, TEXT("Checking connections"))
-
 		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
 			bConnected = false;
@@ -107,7 +115,7 @@ bool ANodeManager::checkConnect()
 				continue;
 			}
 		}
-		if (bConnected == false)
+		if (!bConnected)
 			break;
 	}
 
@@ -129,14 +137,19 @@ void ANodeManager::showConnect()
 			}
 		}
 	}
-	UE_LOG(LogTemp, Display, TEXT("Connections shown!"))
+	UE_LOG(LogTemp, Display, TEXT("Connections shown!"));
+
+	checkConnect();
+	UE_LOG(LogTemp, Display, TEXT("All nodes are connected!"));
 }
 
 void ANodeManager::RunAlgorithm()
 {
+	//UE_LOG(LogTemp, Display, TEXT("This a testing statement. %s"), *SphereArray[0]->GetName());
+
 	int NodeNumber = 0;
 
-	if (checkConnect())
+	if (!checkConnect())
 		return;
 
 	bAlgoReachedEnd = false;
@@ -158,31 +171,43 @@ void ANodeManager::RunAlgorithm()
 		}
 	}
 
-	
-	
-
 	float tempPath = 0;
 	float shortestNode = 0;
 	shortestPath = 0;
 
-	for (int i = 0; i < SphereArray.Num(); i++)
+	float xDifference;
+	float yDifference;
+	float zDifference;
+
+	float xDistance;
+	float yDistance;
+	float zDistance;
+
+	float Distance;
+
+	CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
+
+	for (int i = 0; i < SphereArray[NodeNumber]->ConnectedNodesList.Num(); i++)
 	{
-		CurrentNodeLocation = SphereArray[0]->GetActorLocation();
+		//UE_LOG(LogTemp, Display, TEXT("This a testing statement. %f, %f, %f"), SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.X, SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.Y, SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.Z);
+		NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation;
 
-		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
+		xDifference = SphereArray[NodeNumber]->SphereLocation.X - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.X;
+		yDifference = SphereArray[NodeNumber]->SphereLocation.Y - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Y;
+		zDifference = SphereArray[NodeNumber]->SphereLocation.Z - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Z;
+
+		xDistance = pow(xDifference, 2);
+		yDistance = pow(yDifference, 2);
+		zDistance = pow(zDifference, 2);
+
+		Distance = xDistance + yDistance + zDistance;
+
+		tempPath = pow(Distance, 0.5);
+
+		if (shortestPath > tempPath)
 		{
-			NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[j]->GetActorLocation();
-
-			tempPath = FVector::Dist(CurrentNodeLocation, NextNodeLocation);
-
-			UE_LOG(LogTemp, Display, TEXT("Temporary path: %tempPath"));
-
-			if (shortestPath > tempPath)
-			{
-				shortestPath = tempPath;
-				shortestNode = i;
-			}
+			shortestPath = tempPath;
+			shortestNode = i;
 		}
 	}
-
 }

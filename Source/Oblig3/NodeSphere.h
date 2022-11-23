@@ -25,6 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	bool bConnecting;
+	FVector SphereLocation;
 
 	TArray<ANodeSphere*> ConnectedNodesList;
 
