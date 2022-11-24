@@ -191,6 +191,12 @@ void ANodeManager::RunAlgorithm()
 	int AlgoPathSize;
 	int LoopCount = 0;
 
+	for (int i = 0; i < SphereArray.Num(); i++)
+	{
+		if (SphereArray[i]->isStartNode())
+			AlgoPath.Add(SphereArray[NodeNumber]);
+	}
+
 	while (!bAlgoReachedEnd)
 	{
 		CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
@@ -254,7 +260,7 @@ void ANodeManager::RunAlgorithm()
 			{
 				if (AlgoPathSize > 0)
 				{
-					UE_LOG(LogTemp, Display, TEXT("Algopathsize if gate opened"));
+					//UE_LOG(LogTemp, Display, TEXT("Algopathsize if gate opened"));
 					if (SphereArray[i] == AlgoPath[AlgoPathSize - 1])
 					{
 						shortestNode = i;
@@ -266,26 +272,27 @@ void ANodeManager::RunAlgorithm()
 
 			//for (int i = 0; i < AlgoPath.Num(); i++)
 			//{
-			//	UE_LOG(LogTemp, Display, TEXT("New shortest node:, %s"), *AlgoPath[i]->GetName());
+			//	UE_LOG(LogTemp, Display, TEXT("New shortest node: %s"), *AlgoPath[i]->GetName());
 			//}
 		}
 		
 		bSearchedNode = false;
 
-		for (int i = 0; i < AlgoPath.Num(); i++)
-		{
-			if (AlgoPath[AlgoPathSize] == AlgoPath[i])
-			{
-				UE_LOG(LogTemp, Display, TEXT("If gate opened:"));
-				bSearchedNode = true;
-			}
-		}
-
-		if (!bSearchedNode)
-			AlgoPath.Add(SphereArray[AlgoPathSize]);
-
 		NodeNumber = shortestNode;
 		SearchedNodes.Add(SphereArray[NodeNumber]);
+
+		for (int i = 0; i < AlgoPath.Num(); i++)
+		{
+			UE_LOG(LogTemp, Display, TEXT("AlgoPath: %s"), *AlgoPath[i]->GetName());
+		//	if (AlgoPath[AlgoPathSize] == AlgoPath[i])
+		//	{
+		//		UE_LOG(LogTemp, Display, TEXT("If gate opened: %s"), *AlgoPath[i]->GetName());
+		//		bSearchedNode = true;
+		//	}
+		}
+
+		//if (!bSearchedNode)
+		AlgoPath.Add(SphereArray[NodeNumber]);
 
 		if (SphereArray[NodeNumber]->isEndNode())
 			bAlgoReachedEnd = true;
@@ -302,7 +309,7 @@ void ANodeManager::RunAlgorithm()
 
 	for (int i = 0; i < AlgoPath.Num(); i++)
 	{
-		if (!AlgoPath[i]->isStartNode() || !AlgoPath[i]->isEndNode())
+		if (!AlgoPath[i]->isStartNode() && !AlgoPath[i]->isEndNode())
 			AlgoPath[i]->NodeMesh->SetStaticMesh(AlgoPath[i]->BlueSphere);
 	}
 }
