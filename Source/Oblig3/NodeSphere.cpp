@@ -67,7 +67,6 @@ void ANodeSphere::BeginPlay()
 	Super::BeginPlay();
     
     CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ANodeSphere::OnOverlap);
-    SphereLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -75,6 +74,7 @@ void ANodeSphere::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    SphereLocation = GetActorLocation();
 }
 
 void ANodeSphere::connectTo(ANodeSphere* connectSphere)

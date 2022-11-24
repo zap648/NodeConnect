@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "NodeManager.h"
 #include "NodeSphere.h"
 #include "DrawDebugHelpers.h"
 #include "Math/Vector.h"
 #include <math.h>
-#include "NodeManager.h"
 
 // Sets default values
 ANodeManager::ANodeManager()
@@ -100,6 +100,7 @@ void ANodeManager::connectNodes()
 	//UE_LOG(LogTemp, Display, TEXT("Loop completed!"));
 }
 
+// Checks through all nodes if they have at least ONE connected node
 bool ANodeManager::checkConnect()
 {
 	bool bConnected;
@@ -114,7 +115,7 @@ bool ANodeManager::checkConnect()
 			if (SphereArray[i]->ConnectedNodesList[j] != nullptr)
 			{
 				bConnected = true;
-				continue;
+				break;
 			}
 		}
 		if (!bConnected)

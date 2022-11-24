@@ -35,8 +35,6 @@ public:
 	bool isStartNode();
 	bool isEndNode();
 
-	FVector SphereLocation;
-
 	UPROPERTY(VisibleAnywhere)
 		UStaticMeshComponent* NodeMesh = nullptr;
 
