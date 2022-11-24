@@ -105,13 +105,19 @@ void ANodeSphere::connectTo(ANodeSphere* connectSphere)
 void ANodeSphere::setStartNode(bool b)
 {
     bStart = b;
-    NodeMesh->SetStaticMesh(GreenSphere);
+    if (b == true)
+        NodeMesh->SetStaticMesh(GreenSphere);
+    else
+        NodeMesh->SetStaticMesh(WhiteSphere);
 }
 
 void ANodeSphere::setEndNode(bool b)
 {
     bEnd = b;
-    NodeMesh->SetStaticMesh(RedSphere);
+    if (b == true)
+        NodeMesh->SetStaticMesh(RedSphere);
+    else
+        NodeMesh->SetStaticMesh(WhiteSphere);
 }
 
 bool ANodeSphere::isStartNode()

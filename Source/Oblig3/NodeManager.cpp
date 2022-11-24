@@ -62,7 +62,7 @@ void ANodeManager::spawnNodes()
 
 	// Setting the start & end nodes
 	SphereArray[0]->setStartNode(true);
-	SphereArray[8]->setEndNode(false);
+	SphereArray[8]->setEndNode(true);
 	UE_LOG(LogTemp, Display, TEXT("Start & End node set!"));
 }
 
@@ -199,6 +199,7 @@ void ANodeManager::RunAlgorithm()
 
 	while (!bAlgoReachedEnd)
 	{
+		UE_LOG(LogTemp, Display, TEXT("CurrentNode: %s"), *SphereArray[NodeNumber]->GetName());
 		CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
 		shortestPath = INT_MAX;
 
@@ -260,20 +261,14 @@ void ANodeManager::RunAlgorithm()
 			{
 				if (AlgoPathSize > 0)
 				{
-					//UE_LOG(LogTemp, Display, TEXT("Algopathsize if gate opened"));
 					if (SphereArray[i] == AlgoPath[AlgoPathSize - 1])
 					{
 						shortestNode = i;
 						AlgoPath.RemoveAt(AlgoPathSize);
-						UE_LOG(LogTemp, Display, TEXT("New shortest node:, %f"), shortestNode);
+						UE_LOG(LogTemp, Display, TEXT("New shortest node: %f"), shortestNode);
 					}
 				}
 			}
-
-			//for (int i = 0; i < AlgoPath.Num(); i++)
-			//{
-			//	UE_LOG(LogTemp, Display, TEXT("New shortest node: %s"), *AlgoPath[i]->GetName());
-			//}
 		}
 		
 		bSearchedNode = false;
@@ -282,17 +277,11 @@ void ANodeManager::RunAlgorithm()
 		SearchedNodes.Add(SphereArray[NodeNumber]);
 
 		for (int i = 0; i < AlgoPath.Num(); i++)
-		{
 			UE_LOG(LogTemp, Display, TEXT("AlgoPath: %s"), *AlgoPath[i]->GetName());
-		//	if (AlgoPath[AlgoPathSize] == AlgoPath[i])
-		//	{
-		//		UE_LOG(LogTemp, Display, TEXT("If gate opened: %s"), *AlgoPath[i]->GetName());
-		//		bSearchedNode = true;
-		//	}
-		}
 
-		//if (!bSearchedNode)
-		AlgoPath.Add(SphereArray[NodeNumber]);
+		UE_LOG(LogTemp, Display, TEXT("Last in AlgoPath & NextNode: %s, %s"), *AlgoPath.Last()->GetName(), *SphereArray[NodeNumber]->GetName());
+		if (SphereArray[NodeNumber] != AlgoPath.Last())
+			AlgoPath.Add(SphereArray[NodeNumber]);
 
 		if (SphereArray[NodeNumber]->isEndNode())
 			bAlgoReachedEnd = true;
