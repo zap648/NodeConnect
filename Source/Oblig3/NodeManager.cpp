@@ -114,11 +114,9 @@ bool ANodeManager::checkConnect()
 			if (SphereArray[i]->ConnectedNodesList[j] != nullptr)
 			{
 				bConnected = true;
-				UE_LOG(LogTemp, Display, TEXT("A sphere is connected!!!"));
+				// UE_LOG(LogTemp, Display, TEXT("A sphere is connected!!!"));
 				break;
 			}
-			else
-				UE_LOG(LogTemp, Display, TEXT("Sphere is not connected..."));
 		}
 		if (!bConnected)
 			break;
@@ -176,9 +174,9 @@ void ANodeManager::RunAlgorithm()
 		}
 	}
 
-	float tempPath = 0;
+	float tempPath;
 	float shortestNode = 0;
-	shortestPath = 0;
+	bool bSearchedNode;
 
 	float xDifference;
 	float yDifference;
@@ -190,29 +188,94 @@ void ANodeManager::RunAlgorithm()
 
 	float Distance;
 
-	CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
+	int AlgoPathSize;
+	int LoopCount = 0;
 
-	for (int i = 0; i < SphereArray[NodeNumber]->ConnectedNodesList.Num(); i++)
+	while (!bAlgoReachedEnd)
 	{
-		//UE_LOG(LogTemp, Display, TEXT("This a testing statement. %f, %f, %f"), SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.X, SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.Y, SphereArray[NodeNumber]->ConnectedNodesList[0]->SphereLocation.Z);
-		NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation;
+		CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
+		shortestPath = INT_MAX;
 
-		xDifference = SphereArray[NodeNumber]->SphereLocation.X - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.X;
-		yDifference = SphereArray[NodeNumber]->SphereLocation.Y - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Y;
-		zDifference = SphereArray[NodeNumber]->SphereLocation.Z - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Z;
-
-		xDistance = pow(xDifference, 2);
-		yDistance = pow(yDifference, 2);
-		zDistance = pow(zDifference, 2);
-
-		Distance = xDistance + yDistance + zDistance;
-
-		tempPath = pow(Distance, 0.5);
-
-		if (shortestPath > tempPath)
+		for (int i = 0; i < SphereArray[NodeNumber]->ConnectedNodesList.Num(); i++)
 		{
-			shortestPath = tempPath;
-			shortestNode = i;
+			NextNodeLocation = SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation;
+
+			xDifference = SphereArray[NodeNumber]->SphereLocation.X - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.X;
+			yDifference = SphereArray[NodeNumber]->SphereLocation.Y - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Y;
+			zDifference = SphereArray[NodeNumber]->SphereLocation.Z - SphereArray[NodeNumber]->ConnectedNodesList[i]->SphereLocation.Z;
+
+			xDistance = pow(xDifference, 2);
+			yDistance = pow(yDifference, 2);
+			zDistance = pow(zDifference, 2);
+
+			Distance = xDistance + yDistance + zDistance;
+
+			tempPath = pow(Distance, 0.5);
+
+			UE_LOG(LogTemp, Display, TEXT("This a testing statement: %f"), tempPath);
+
+			if (shortestPath > tempPath)
+			{
+				for (int j = 0; j < SearchedNodes.Num(); j++)
+				{
+					bSearchedNode = false;
+
+					// Checks if the next sphere has already been searched
+					if (SearchedNodes[j] == SphereArray[NodeNumber]->ConnectedNodesList[i])
+					{
+						bSearchedNode = true;
+						break;
+					}
+				}
+
+				if (!bSearchedNode)
+				{
+					shortestPath = tempPath;
+					shortestNode = i;
+					UE_LOG(LogTemp, Display, TEXT("Shortest node: %f"), shortestNode);
+				}
+			}
 		}
+
+		UE_LOG(LogTemp, Display, TEXT("Shortest path: %f"), shortestPath);
+
+		if (shortestPath == INT_MAX)
+		{
+			AlgoPathSize = AlgoPath.Num() - 1;
+			shortestNode = AlgoPathSize - 1;
+			AlgoPath.RemoveAt(AlgoPathSize);
+		}
+		
+		bSearchedNode = false;
+
+		for (int i = 0; i < AlgoPath.Num(); i++)
+		{
+			if (AlgoPath[i] == AlgoPath[shortestNode])
+				bSearchedNode = true;
+		}
+
+		if (!bSearchedNode)
+			AlgoPath.Add(SphereArray[shortestNode]);
+
+		NodeNumber = shortestNode;
+		SearchedNodes.Add(SphereArray[NodeNumber]);
+
+		if (SphereArray[NodeNumber]->isEndNode())
+			bAlgoReachedEnd = true;
+
+		LoopCount++;
+		if (LoopCount >= 1000)
+		{
+			bAlgoReachedEnd = true;
+			UE_LOG(LogTemp, Display, TEXT("Infinite loop detected!!!!"));
+			break;
+		}
+	}
+
+
+	for (int i = 0; i < AlgoPath.Num(); i++)
+	{
+		if (!AlgoPath[i]->isStartNode() || !AlgoPath[i]->isEndNode())
+			AlgoPath[i]->NodeMesh->SetStaticMesh(AlgoPath[i]->BlueSphere);
 	}
 }

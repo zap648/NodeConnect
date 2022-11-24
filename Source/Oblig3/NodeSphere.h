@@ -50,6 +50,9 @@ public:
 		class UStaticMesh* GreenSphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		class UStaticMesh* BlueSphere;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
 		float size;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)

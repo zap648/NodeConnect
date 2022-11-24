@@ -53,6 +53,9 @@ ANodeSphere::ANodeSphere()
     ConstructorHelpers::FObjectFinder<UStaticMesh>GreenMeshAsset(TEXT("StaticMesh'/Game/GreenSphere.GreenSphere'"));
 	GreenSphere = GreenMeshAsset.Object;
 
+    ConstructorHelpers::FObjectFinder<UStaticMesh>BlueMeshAsset(TEXT("StaticMesh'/Game/BlueSphere.BlueSphere'"));
+    BlueSphere = BlueMeshAsset.Object;
+
     NodeMesh->SetStaticMesh(WhiteSphere);
 
 	bStart = false;

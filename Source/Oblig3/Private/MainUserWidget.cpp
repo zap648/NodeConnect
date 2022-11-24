@@ -23,5 +23,4 @@ void UMainUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 void UMainUserWidget::DijkstraButton()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Dijkstra button clicked"));
-	NodeManagerPtr->RunAlgorithm();
 }

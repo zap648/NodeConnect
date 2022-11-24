@@ -29,7 +29,6 @@ public:
 	void showConnect();
 
 	void RunAlgorithm();
-	void dijkstra();
 	
 	bool bConnecting;
 	int loopCount;
@@ -47,6 +46,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<class ANodeSphere*> SearchedNodes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
+		TArray<class ANodeSphere*> AlgoPath;
 
 	FVector CurrentNodeLocation;
 	FVector NextNodeLocation;

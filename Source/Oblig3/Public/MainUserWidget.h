@@ -21,8 +21,6 @@ public:
 
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	ANodeManager* NodeManagerPtr = Cast<ANodeManager>(StaticClass());
-
 	UPROPERTY(BlueprintReadWrite, Category = "UI", meta = (BindWidget))
 		class UButton* RunDijkstraButton;
 
