@@ -38,7 +38,7 @@ void ANodeManager::Tick(float DeltaTime)
 		connectNodes();
 
 	if (!bConnecting && !bAlgoReachedEnd)
-		RunAlgorithm();
+		RunAlgorithm(true);
 
 	//for (int i = 0; i < SphereArray.Num(); i++)
 	//{
@@ -63,6 +63,9 @@ void ANodeManager::spawnNodes()
 	// Setting the start & end nodes
 	SphereArray[0]->setStartNode(true);
 	SphereArray[8]->setEndNode(true);
+
+	EndNode = SphereArray[8];
+
 	UE_LOG(LogTemp, Display, TEXT("Start & End node set!"));
 }
 
@@ -146,7 +149,7 @@ void ANodeManager::showConnect()
 		UE_LOG(LogTemp, Display, TEXT("All nodes are connected!"));
 }
 
-void ANodeManager::RunAlgorithm()
+void ANodeManager::RunAlgorithm(bool bRunAStar)
 {
 	//UE_LOG(LogTemp, Display, TEXT("This a testing statement. %s"), *SphereArray[0]->GetName());
 
@@ -199,6 +202,11 @@ void ANodeManager::RunAlgorithm()
 
 	while (!bAlgoReachedEnd)
 	{
+		/*for (int i = 0; i < ArrDistanceToEnd.Num(); i++)
+		{
+			ArrDistanceToEnd[i] = NULL;
+		}*/
+
 		UE_LOG(LogTemp, Display, TEXT("CurrentNode: %s"), *SphereArray[NodeNumber]->GetName());
 		CurrentNodeLocation = SphereArray[NodeNumber]->SphereLocation;
 		shortestPath = INT_MAX;
@@ -220,6 +228,12 @@ void ANodeManager::RunAlgorithm()
 			tempPath = pow(Distance, 0.5);
 
 			UE_LOG(LogTemp, Display, TEXT("Checking distance of node: %f, %d"), tempPath, i);
+
+			if (bRunAStar)
+			{
+				/*ArrDistanceToEnd.Add(DistanceToEnd(SphereArray[NodeNumber]->ConnectedNodesList[i]));*/
+				tempPath += DistanceToEnd(SphereArray[NodeNumber]->ConnectedNodesList[i]);
+			}
 
 			if (shortestPath > tempPath)
 			{
@@ -301,4 +315,32 @@ void ANodeManager::RunAlgorithm()
 		if (!AlgoPath[i]->isStartNode() && !AlgoPath[i]->isEndNode())
 			AlgoPath[i]->NodeMesh->SetStaticMesh(AlgoPath[i]->BlueSphere);
 	}
+}
+
+float ANodeManager::DistanceToEnd(ANodeSphere* CurrentNode)
+{
+	float xDifference;
+	float yDifference;
+	float zDifference;
+
+	float xDistance;
+	float yDistance;
+	float zDistance;
+
+	float Distance;
+	float DistanceToEnd;
+
+	xDifference = EndNode->SphereLocation.X - CurrentNode->SphereLocation.X;
+	yDifference = EndNode->SphereLocation.Y - CurrentNode->SphereLocation.Y;
+	zDifference = EndNode->SphereLocation.Z - CurrentNode->SphereLocation.Z;
+
+	xDistance = pow(xDifference, 2);
+	yDistance = pow(yDifference, 2);
+	zDistance = pow(zDifference, 2);
+
+	Distance = xDistance + yDistance + zDistance;
+
+	DistanceToEnd = pow(Distance, 0.5);
+
+	return DistanceToEnd;
 }

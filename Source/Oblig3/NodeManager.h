@@ -28,7 +28,10 @@ public:
 	bool checkConnect();
 	void showConnect();
 
-	void RunAlgorithm();
+	void RunAlgorithm(bool bRunAStar);
+	float DistanceToEnd(class ANodeSphere* CurrentNode);
+
+	class ANodeSphere* EndNode;
 	
 	bool bConnecting;
 	int loopCount;
@@ -49,6 +52,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
 		TArray<class ANodeSphere*> AlgoPath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mytools)
+		TArray<float> ArrDistanceToEnd;
 
 	FVector CurrentNodeLocation;
 	FVector NextNodeLocation;
