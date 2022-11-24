@@ -274,7 +274,7 @@ void ANodeManager::RunAlgorithm()
 
 		for (int i = 0; i < AlgoPath.Num(); i++)
 		{
-			if (AlgoPath[shortestNode] == AlgoPath[i])
+			if (AlgoPath[AlgoPathSize] == AlgoPath[i])
 			{
 				UE_LOG(LogTemp, Display, TEXT("If gate opened:"));
 				bSearchedNode = true;
