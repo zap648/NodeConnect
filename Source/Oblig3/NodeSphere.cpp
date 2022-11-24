@@ -129,7 +129,7 @@ void ANodeSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 {
     if (OtherActor->IsA(ANodeSphere::StaticClass())) {
         ANodeSphere* CollidedNode = Cast<ANodeSphere>(OtherActor);
-        UE_LOG(LogTemp, Display, TEXT("A node has collided with another node!"));
+        //UE_LOG(LogTemp, Display, TEXT("A node has collided with another node!"));
 
         // First check if the node you just collided with is already in your ConnectedNodeList
         // If so we don't need to add it, otherwise we do

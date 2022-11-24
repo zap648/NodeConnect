@@ -212,7 +212,7 @@ void ANodeManager::RunAlgorithm()
 
 			tempPath = pow(Distance, 0.5);
 
-			UE_LOG(LogTemp, Display, TEXT("This a testing statement: %f"), tempPath);
+			UE_LOG(LogTemp, Display, TEXT("Checking distance of node: %f, %d"), tempPath, i);
 
 			if (shortestPath > tempPath)
 			{
@@ -230,32 +230,47 @@ void ANodeManager::RunAlgorithm()
 
 				if (!bSearchedNode)
 				{
-					shortestPath = tempPath;
-					shortestNode = i;
-					UE_LOG(LogTemp, Display, TEXT("Shortest node: %f"), shortestNode);
+					for (int j = 0; j < SphereArray.Num(); j++)
+					{
+						if (SphereArray[j] == SphereArray[NodeNumber]->ConnectedNodesList[i])
+						{
+							shortestPath = tempPath;
+							shortestNode = j;
+							//UE_LOG(LogTemp, Display, TEXT("Shortest node: %f"), shortestNode);
+						}
+					}
 				}
 			}
 		}
 
-		UE_LOG(LogTemp, Display, TEXT("Shortest path: %f"), shortestPath);
+		UE_LOG(LogTemp, Display, TEXT("Shortest path & node: %f, %f"), shortestPath, shortestNode);
 
 		if (shortestPath == INT_MAX)
 		{
 			AlgoPathSize = AlgoPath.Num() - 1;
-			shortestNode = AlgoPathSize - 1;
-			AlgoPath.RemoveAt(AlgoPathSize);
+			for (int i = 0; i < SphereArray.Num(); i++)
+			{
+				if (AlgoPathSize > 0)
+				{
+					if (SphereArray[i] == AlgoPath[AlgoPathSize - 1])
+					{
+						shortestPath = i;
+						AlgoPath.RemoveAt(AlgoPathSize);
+					}
+				}
+			}
 		}
 		
 		bSearchedNode = false;
 
 		for (int i = 0; i < AlgoPath.Num(); i++)
 		{
-			if (AlgoPath[i] == AlgoPath[shortestNode])
+			if (AlgoPath[AlgoPathSize] == AlgoPath[i])
 				bSearchedNode = true;
 		}
 
 		if (!bSearchedNode)
-			AlgoPath.Add(SphereArray[shortestNode]);
+			AlgoPath.Add(SphereArray[AlgoPathSize]);
 
 		NodeNumber = shortestNode;
 		SearchedNodes.Add(SphereArray[NodeNumber]);
