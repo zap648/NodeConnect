@@ -245,28 +245,40 @@ void ANodeManager::RunAlgorithm()
 
 		UE_LOG(LogTemp, Display, TEXT("Shortest path & node: %f, %f"), shortestPath, shortestNode);
 
+		// Checks if the algorithm has reached a dead end, and if so go back
 		if (shortestPath == INT_MAX)
 		{
+			UE_LOG(LogTemp, Display, TEXT("Shortest path INT_MAX detected"));
 			AlgoPathSize = AlgoPath.Num() - 1;
 			for (int i = 0; i < SphereArray.Num(); i++)
 			{
 				if (AlgoPathSize > 0)
 				{
+					UE_LOG(LogTemp, Display, TEXT("Algopathsize if gate opened"));
 					if (SphereArray[i] == AlgoPath[AlgoPathSize - 1])
 					{
-						shortestPath = i;
+						shortestNode = i;
 						AlgoPath.RemoveAt(AlgoPathSize);
+						UE_LOG(LogTemp, Display, TEXT("New shortest node:, %f"), shortestNode);
 					}
 				}
 			}
+
+			//for (int i = 0; i < AlgoPath.Num(); i++)
+			//{
+			//	UE_LOG(LogTemp, Display, TEXT("New shortest node:, %s"), *AlgoPath[i]->GetName());
+			//}
 		}
 		
 		bSearchedNode = false;
 
 		for (int i = 0; i < AlgoPath.Num(); i++)
 		{
-			if (AlgoPath[AlgoPathSize] == AlgoPath[i])
+			if (AlgoPath[shortestNode] == AlgoPath[i])
+			{
+				UE_LOG(LogTemp, Display, TEXT("If gate opened:"));
 				bSearchedNode = true;
+			}
 		}
 
 		if (!bSearchedNode)
@@ -279,7 +291,7 @@ void ANodeManager::RunAlgorithm()
 			bAlgoReachedEnd = true;
 
 		LoopCount++;
-		if (LoopCount >= 1000)
+		if (LoopCount >= 30)
 		{
 			bAlgoReachedEnd = true;
 			UE_LOG(LogTemp, Display, TEXT("Infinite loop detected!!!!"));
