@@ -67,6 +67,7 @@ void ANodeSphere::BeginPlay()
 	Super::BeginPlay();
     
     CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ANodeSphere::OnOverlap);
+    CollisionSphere->bHiddenInGame = false;
 }
 
 // Called every frame

@@ -80,7 +80,6 @@ void ANodeManager::connectNodes()
 	{
 		for (int i = 0; i < SphereArray.Num(); i++)
 		{
-			SphereArray[i]->bConnecting = false;
 			bConnecting = false;
 		}
 		UE_LOG(LogTemp, Display, TEXT("Connecting completed! Showing nodes..."));
@@ -108,15 +107,18 @@ bool ANodeManager::checkConnect()
 	for (int i = 0; i < SphereArray.Num(); i++) 
 	{
 		//UE_LOG(LogTemp, Display, TEXT("Checking connections"));
-
+		bConnected = false;
 		for (int j = 0; j < SphereArray[i]->ConnectedNodesList.Num(); j++)
 		{
 			bConnected = false;
 			if (SphereArray[i]->ConnectedNodesList[j] != nullptr)
 			{
 				bConnected = true;
+				UE_LOG(LogTemp, Display, TEXT("A sphere is connected!!!"));
 				break;
 			}
+			else
+				UE_LOG(LogTemp, Display, TEXT("Sphere is not connected..."));
 		}
 		if (!bConnected)
 			break;
@@ -142,8 +144,8 @@ void ANodeManager::showConnect()
 	}
 	UE_LOG(LogTemp, Display, TEXT("Connections shown!"));
 
-	checkConnect();
-	UE_LOG(LogTemp, Display, TEXT("All nodes are connected!"));
+	if (checkConnect())
+		UE_LOG(LogTemp, Display, TEXT("All nodes are connected!"));
 }
 
 void ANodeManager::RunAlgorithm()
