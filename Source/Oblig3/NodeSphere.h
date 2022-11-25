@@ -27,12 +27,15 @@ public:
 	FVector SphereLocation;
 
 	TArray<ANodeSphere*> ConnectedNodesList;
+	TArray<float> DistanceToNode;
 
 	void connectTo(ANodeSphere* connectSphere);
 	void setStartNode(bool b);
 	void setEndNode(bool b);
+	void setVisited(bool b);
 	bool isStartNode();
 	bool isEndNode();
+	bool isVisited();
 
 	UPROPERTY(VisibleAnywhere)
 		UStaticMeshComponent* NodeMesh = nullptr;
@@ -68,4 +71,5 @@ public:
 private:
 	bool bStart;
 	bool bEnd;
+	bool bVisited;
 };

@@ -27,10 +27,13 @@ public:
 	void connectNodes();
 	bool checkConnect();
 	void showConnect();
+	void setDistanceToNodes();
 
+	void TSPAlgorithm();
 	void RunAlgorithm(bool bRunAStar);
 	float DistanceToEnd(class ANodeSphere* CurrentNode);
 
+	class ANodeSphere* StartNode;
 	class ANodeSphere* EndNode;
 	
 	bool bConnecting;

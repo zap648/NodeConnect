@@ -149,6 +149,127 @@ void ANodeManager::showConnect()
 		UE_LOG(LogTemp, Display, TEXT("All nodes are connected!"));
 }
 
+void ANodeManager::setDistanceToNodes()
+{
+	float xDifference;
+	float yDifference;
+	float zDifference;
+
+	float xDistance;
+	float yDistance;
+	float zDistance;
+
+	float Distance;
+	float DistanceToEnd;
+
+	for (int i = 0; i < SphereArray.Num(); i++)
+	{
+		for (int j = 0; j < SphereArray.Num(); j++)
+		{
+			// Finds distance between SphereArray[i] and SphereArray[j]
+			xDifference = SphereArray[i]->SphereLocation.X - SphereArray[j]->SphereLocation.X;
+			yDifference = SphereArray[i]->SphereLocation.Y - SphereArray[j]->SphereLocation.Y;
+			zDifference = SphereArray[i]->SphereLocation.Z - SphereArray[j]->SphereLocation.Z;
+
+			xDistance = pow(xDifference, 2);
+			yDistance = pow(yDifference, 2);
+			zDistance = pow(zDifference, 2);
+
+			Distance = xDistance + yDistance + zDistance;
+
+			DistanceToEnd = pow(Distance, 0.5);
+
+			// Places the distance of SphereArray[j] in parallel to its position in SphereArray into SphereArray[i]->DistanceToNode
+			// (NULL if it its own position)
+			if (i != j)
+				SphereArray[i]->DistanceToNode.Add(DistanceToEnd);
+			else
+				SphereArray[i]->DistanceToNode.Add(NULL);
+		}
+	}
+}
+
+void ANodeManager::TSPAlgorithm()
+{
+	bool bTSPSearching = true;
+
+	TArray <ANodeSphere*> TSPShortestPath;
+	TArray <ANodeSphere*> tempPath;
+	float shortestSum;
+	float tempSum;
+	float shortestTemp;
+
+	// Finds where startNode is
+	int startNode;
+	for (int i = 0; i < SphereArray.Num(); i++)
+	{
+		if (SphereArray[i] == StartNode)
+		{
+			startNode = i;
+		}
+	}
+	
+	while (bTSPSearching)
+	{
+		// Finds the closest unvisited node
+		int closestNode;
+		int currentNode = startNode;
+
+		tempPath.Add(SphereArray[currentNode]);
+		SphereArray[currentNode]->setVisited(true);
+
+		// Searches for the closest unvisited node
+		shortestTemp = INT_MAX;
+		shortestSum = INT_MAX;
+		for (int j = 0; j < SphereArray[currentNode]->DistanceToNode.Num(); j++)
+		{
+			if (SphereArray[currentNode]->DistanceToNode[j] < shortestTemp && !SphereArray[j]->isVisited())
+			{
+				shortestTemp = SphereArray[currentNode]->DistanceToNode[j];
+				closestNode = j;
+			}
+		}
+
+		if (shortestTemp == INT_MAX && SphereArray[currentNode] != StartNode)
+		{
+			// Checks if 
+			if (tempSum < shortestSum && tempPath.Num() == 9)
+			{
+				TSPShortestPath = tempPath;
+				shortestSum = tempSum;
+			}
+
+			// Makes node go one step backwards in its path
+			for (int i = 0; i < SphereArray.Num(); i++)
+			{
+				if (SphereArray[i] == tempPath.Last(1))
+				{
+					tempSum -= SphereArray[currentNode]->DistanceToNode[i];
+					currentNode = i;
+					if ((i + 1) < tempPath.Num())
+					{
+						tempPath[i + 1]->setVisited(false);
+						tempPath.Remove(tempPath[i + 1]);
+					}
+				}
+			}
+		}
+
+		// Leaves the loop if there are no more available options
+		else if (shortestTemp == INT_MAX && SphereArray[currentNode] == StartNode)
+		{
+			bTSPSearching;
+			break;
+		}
+
+		// Moves to the closest unvisited node
+		tempSum += shortestTemp;
+		currentNode = closestNode;
+	}
+
+
+}
+
 void ANodeManager::RunAlgorithm(bool bRunAStar)
 {
 	//UE_LOG(LogTemp, Display, TEXT("This a testing statement. %s"), *SphereArray[0]->GetName());

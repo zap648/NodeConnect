@@ -120,6 +120,11 @@ void ANodeSphere::setEndNode(bool b)
         NodeMesh->SetStaticMesh(WhiteSphere);
 }
 
+void ANodeSphere::setVisited(bool b)
+{
+    bVisited = b;
+}
+
 bool ANodeSphere::isStartNode()
 {
     return bStart;
@@ -128,6 +133,11 @@ bool ANodeSphere::isStartNode()
 bool ANodeSphere::isEndNode()
 {
     return bEnd;
+}
+
+bool ANodeSphere::isVisited()
+{
+    return bVisited;
 }
 
 void ANodeSphere::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
