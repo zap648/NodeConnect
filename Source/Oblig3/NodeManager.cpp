@@ -38,7 +38,10 @@ void ANodeManager::Tick(float DeltaTime)
 		connectNodes();
 
 	if (!bConnecting && !bAlgoReachedEnd)
-		RunAlgorithm(true);
+	{
+		//TSPAlgorithm();
+		 RunAlgorithm(true);
+	}
 
 	//for (int i = 0; i < SphereArray.Num(); i++)
 	//{
@@ -203,12 +206,13 @@ void ANodeManager::TSPAlgorithm()
 	int startNode;
 	for (int i = 0; i < SphereArray.Num(); i++)
 	{
-		if (SphereArray[i] == StartNode)
+		if (SphereArray[i]->isStartNode())
 		{
 			startNode = i;
 		}
 	}
 	
+	int loopCnt = 0;
 	while (bTSPSearching)
 	{
 		// Finds the closest unvisited node
@@ -242,14 +246,18 @@ void ANodeManager::TSPAlgorithm()
 			// Makes node go one step backwards in its path
 			for (int i = 0; i < SphereArray.Num(); i++)
 			{
-				if (SphereArray[i] == tempPath.Last(1))
+				if (tempPath.Num() > 1 && SphereArray.Num() > 0)
 				{
-					tempSum -= SphereArray[currentNode]->DistanceToNode[i];
-					currentNode = i;
-					if ((i + 1) < tempPath.Num())
+					if (SphereArray[i] == tempPath.Last(1))
 					{
-						tempPath[i + 1]->setVisited(false);
-						tempPath.Remove(tempPath[i + 1]);
+						tempSum -= SphereArray[currentNode]->DistanceToNode[i];
+						currentNode = i;
+						if ((i + 1) < tempPath.Num())
+						{
+							tempPath[i + 1]->setVisited(false);
+							tempPath.Remove(tempPath[i + 1]);
+							break;
+						}
 					}
 				}
 			}
@@ -265,9 +273,11 @@ void ANodeManager::TSPAlgorithm()
 		// Moves to the closest unvisited node
 		tempSum += shortestTemp;
 		currentNode = closestNode;
+
+		loopCnt++;
+		if (loopCnt > 1000)
+			break;
 	}
-
-
 }
 
 void ANodeManager::RunAlgorithm(bool bRunAStar)

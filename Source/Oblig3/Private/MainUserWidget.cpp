@@ -3,6 +3,7 @@
 
 #include "MainUserWidget.h"
 #include "Components/Button.h"
+#include "../NodeManager.h"
 
 bool UMainUserWidget::Initialize() {
 	Super::Initialize();
